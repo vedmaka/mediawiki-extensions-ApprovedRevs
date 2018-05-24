@@ -504,8 +504,18 @@ class ApprovedRevs {
 	 * Pushes stats update job into a jobs queue
 	 *
 	 * @param $title
+	 *
+	 * @return bool
 	 */
 	public static function enqueueStatsUpdate( $title ) {
+		global $egApprovedRevsDisableStatsUpdates;
+
+		// If stats updates are disabled - do nothing since we expect
+		// maintenance script to be added into crontab for scheduled stats update
+		if( $egApprovedRevsDisableStatsUpdates ) {
+			return true;
+		}
+
 		$jobParams = array();
 		$job = new ARUpdateStatsJob( $title, $jobParams );
 		JobQueueGroup::singleton()->lazyPush($job);

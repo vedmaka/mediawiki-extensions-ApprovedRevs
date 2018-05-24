@@ -916,4 +916,25 @@ class ApprovedRevsHooks {
 		$qp['SpecialApprovedRevsPage'] = 'ApprovedRevs';
 		return true;
 	}
+
+	/**
+	 * Triggers stats update when title is moved
+	 *
+	 * @param Title    $title
+	 * @param Title    $newTitle
+	 * @param User     $user
+	 * @param          $oldid
+	 * @param          $newid
+	 * @param          $reason
+	 * @param Revision $revision
+	 *
+	 * @return bool
+	 */
+	public static function onTitleMoveComplete( &$title, &$newTitle, $user, $oldid, $newid, $reason, $revision ) {
+		// There is no reason to do any action if title is being moved across the same namespace
+		if( $title->getNamespace() != $newTitle->getNamespace() ) {
+			ApprovedRevs::enqueueStatsUpdate( $title );
+		}
+		return true;
+	}
 }
