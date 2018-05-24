@@ -1085,13 +1085,14 @@ class ApprovedRevs {
 	public static function notifyStatsChange() {
 		global $egApprovedRevsNotify, $wgPasswordSender, $wgPasswordSenderName;
 		$emailSubject = wfMessage('approvedrevs-notify-email-subject')->text();
+		$specialUrl = SpecialPage::getTitleFor('ApprovedRevs')->getFullURL();
 		foreach ($egApprovedRevsNotify as $userName ) {
 			$user = User::newFromName( $userName );
 			$email = $user->getEmail();
 			if( !$user || empty($email) ) {
 				continue;
 			}
-			$emailBody = wfMessage('approvedrevs-notify-email-body')->params($userName)->text();
+			$emailBody = wfMessage('approvedrevs-notify-email-body')->params($userName, $specialUrl)->text();
 			UserMailer::send(
 				new MailAddress($email, $user->getName()),
 				new MailAddress($wgPasswordSender, $wgPasswordSenderName),
