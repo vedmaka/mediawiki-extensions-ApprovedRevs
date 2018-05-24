@@ -62,7 +62,9 @@
 		"SpecialApprovedRevsPage": "includes/SpecialApprovedRevsPage.php",
 		"ApiApprove": "includes/ApiApprove.php",
 		"ARApproveAction": "includes/AR_ApproveAction.php",
-		"ARUnapproveAction": "includes/AR_UnapproveAction.php"
+		"ARUnapproveAction": "includes/AR_UnapproveAction.php",
+		"ARUpdateStatsJob": "includes/AR_UpdateStatsJob.php",
+		"ApprovedRevsDatabaseMaintenance": "includes/ApprovedRevsDatabaseMaintenance.php"
 	},
 	"ResourceModules": {
 		"ext.ApprovedRevs": {
@@ -144,6 +146,9 @@
 			"ApprovedRevsHooks::onwgQueryPages"
 		]
 	},
+	"JobClasses": {
+		"ar_updatestats": "ARUpdateStatsJob"
+	},
 	"config": {
 		"_prefix": "eg",
 		"ApprovedRevsNamespaces": [ 0, 2, 4, 10, 12 ],
@@ -151,7 +156,8 @@
 		"ApprovedRevsBlankIfUnapproved": false,
 		"ApprovedRevsAutomaticApprovals": true,
 		"ApprovedRevsShowApproveLatest": false,
-		"ApprovedRevsShowNotApprovedMessage": false
+		"ApprovedRevsShowNotApprovedMessage": false,
+		"ApprovedRevsNotify": []
 	},
 	"manifest_version": 1
 }

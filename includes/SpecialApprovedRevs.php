@@ -18,6 +18,10 @@ class SpecialApprovedRevs extends SpecialPage {
 	function execute( $query ) {
 		$request = $this->getRequest();
 
+		//TODO: remove
+		//$test = ApprovedRevs::countQueryByType();
+
+
 		ApprovedRevs::addCSS();
 		$this->setHeaders();
 		list( $limit, $offset ) = $request->getLimitOffset();
@@ -30,6 +34,7 @@ class SpecialApprovedRevs extends SpecialPage {
 		} else {
 			return $rep->doQuery( $offset, $limit );
 		}
+
 	}
 
 	protected function getGroupName() {

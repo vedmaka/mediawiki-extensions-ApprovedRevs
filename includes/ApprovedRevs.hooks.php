@@ -105,6 +105,12 @@ class ApprovedRevsHooks {
 		}
 
 		$title = $wikipage->getTitle();
+
+		// No baseRevId so it's a new article and it's necessary to update stats
+		if( !$baseRevId ) {
+			ApprovedRevs::enqueueStatsUpdate( $title );
+		}
+
 		if ( ! self::userRevsApprovedAutomatically( $user, $title ) ) {
 			return true;
 		}
@@ -677,6 +683,7 @@ class ApprovedRevsHooks {
 	 */
 	static function deleteRevisionApproval( &$article, &$user, $reason, $id ) {
 		ApprovedRevs::deleteRevisionApproval( $article->getTitle() );
+		ApprovedRevs::enqueueStatsUpdate( $article->getTitle() );
 		return true;
 	}
 
@@ -715,6 +722,11 @@ class ApprovedRevsHooks {
 		return true;
 	}
 
+	/**
+	 * @param null|DatabaseUpdater $updater
+	 *
+	 * @return bool
+	 */
 	public static function describeDBSchema( $updater = null ) {
 		$dir = dirname( __FILE__ );
 
@@ -724,11 +736,16 @@ class ApprovedRevsHooks {
 			global $wgExtNewTables, $wgDBtype;
 			//if ( $wgDBtype == 'mysql' ) {
 				$wgExtNewTables[] = array( 'approved_revs', "$dir/../sql/ApprovedRevs.sql" );
+				$wgExtNewTables[] = array( 'approved_revs_stats', "$dir/../sql/approved_revs_stats.sql" );
 			//}
 		} else {
 			//if ( $updater->getDB()->getType() == 'mysql' ) {
 				$updater->addExtensionUpdate( array( 'addTable', 'approved_revs', "$dir/../sql/ApprovedRevs.sql", true ) );
 				$updater->addExtensionUpdate( array( 'addField', 'approved_revs', 'approver_id', "$dir/../sql/patch-approver_id.sql", true ) );
+				$updater->addExtensionUpdate( array( 'addTable', 'approved_revs_stats', "$dir/../sql/approved_revs_stats.sql", true) );
+				// I am not sure about backwards compatibility of this.. I doubt versions of Mediawiki without
+				// DatabaseUpdater have something we could use as alternative
+				$updater->addPostDatabaseUpdateMaintenance( 'ApprovedRevsDatabaseMaintenance' );
 			//}
 		}
 		return true;

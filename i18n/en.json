@@ -41,5 +41,7 @@
 	"apihelp-approve-param-revid": "The revision ID for which to approve.",
 	"apihelp-approve-param-unapprove": "If set, revision will be unapproved rather than approved.",
 	"apihelp-approve-example-1": "Approve Revision 12345",
-	"apihelp-approve-example-2": "Unapprove Revision 12345"
+	"apihelp-approve-example-2": "Unapprove Revision 12345",
+	"approvedrevs-notify-email-body": "Hey, $1!\nI capture this collision course, it's called reliable history. Why does the queen yell?",
+	"approvedrevs-notify-email-subject": "Unrelated suns, to the wormhole."
 }

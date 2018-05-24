@@ -29,6 +29,7 @@ class ARUnapproveAction extends Action {
 		}
 
 		ApprovedRevs::unsetApproval( $title );
+		ApprovedRevs::enqueueStatsUpdate( $title );
 
 		// the message depends on whether the page should display
 		// a blank right now or not

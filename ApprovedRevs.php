@@ -44,6 +44,7 @@ $egApprovedRevsBlankIfUnapproved = false;
 $egApprovedRevsAutomaticApprovals = true;
 $egApprovedRevsShowApproveLatest = false;
 $egApprovedRevsShowNotApprovedMessage = false;
+$egApprovedRevsNotify = array();
 
 // internationalization
 $wgMessagesDirs['ApprovedRevs'] = __DIR__ . '/i18n';
@@ -59,6 +60,10 @@ $wgAutoloadClasses['SpecialApprovedRevsPage'] = $egApprovedRevsIP . 'includes/Sp
 $wgAutoloadClasses['ApiApprove'] = $egApprovedRevsIP . 'includes/ApiApprove.php';
 $wgAutoloadClasses['ARApproveAction'] = $egApprovedRevsIP . 'includes/AR_ApproveAction.php';
 $wgAutoloadClasses['ARUnapproveAction'] = $egApprovedRevsIP . 'includes/AR_UnapproveAction.php';
+$wgAutoloadClasses['ARUpdateStatsJob'] = $egApprovedRevsIP . 'includes/AR_UpdateStatsJob.php';
+$wgAutoloadClasses['ApprovedRevsDatabaseMaintenance'] = $egApprovedRevsIP . 'includes/ApprovedRevsDatabaseMaintenance.php';
+
+$wgJobClasses['ar_updatestats'] = 'ARUpdateStatsJob';
 
 // actions
 $wgActions['approve'] = 'ARApproveAction';
