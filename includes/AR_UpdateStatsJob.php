@@ -13,6 +13,7 @@ class ARUpdateStatsJob extends Job{
 	 */
 	public function __construct( $title, $params ) {
 		parent::__construct('ar_updatestats', $title, $params );
+		$this->removeDuplicates = true;
 	}
 
 	/**

@@ -54,6 +54,7 @@ $egApprovedRevsAutomaticApprovals = true;
 $egApprovedRevsShowApproveLatest = false;
 $egApprovedRevsShowNotApprovedMessage = false;
 $egApprovedRevsNotify = array();
+$egApprovedRevsDisableStatsUpdates = false;
 
 // internationalization
 $wgMessagesDirs['ApprovedRevs'] = __DIR__ . '/i18n';
@@ -108,6 +109,7 @@ $wgHooks['ArticleViewHeader'][] = 'ApprovedRevsHooks::setArticleHeader';
 $wgHooks['ArticleViewHeader'][] = 'ApprovedRevsHooks::displayNotApprovedHeader';
 $wgHooks['OutputPageBodyAttributes'][] = 'ApprovedRevsHooks::addBodyClass';
 $wgHooks['wgQueryPages'][] = 'ApprovedRevsHooks::onwgQueryPages';
+$wgHooks['TitleMoveComplete'][] = 'ApprovedRevsHooks::onTitleMoveComplete';
 
 // Approved File Revisions
 $wgHooks['ImagePageFileHistoryLine'][] = 'ApprovedRevsHooks::onImagePageFileHistoryLine';

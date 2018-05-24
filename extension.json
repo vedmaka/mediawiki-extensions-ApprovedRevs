@@ -167,6 +167,9 @@
 		],
 		"wgQueryPages": [
 			"ApprovedRevsHooks::onwgQueryPages"
+		],
+		"TitleMoveComplete": [
+			"ApprovedRevsHooks::onTitleMoveComplete"
 		]
 	},
 	"JobClasses": {
@@ -188,7 +191,8 @@
 		"ApprovedRevsAutomaticApprovals": true,
 		"ApprovedRevsShowApproveLatest": false,
 		"ApprovedRevsShowNotApprovedMessage": false,
-		"ApprovedRevsNotify": []
+		"ApprovedRevsNotify": [],
+		"ApprovedRevsDisableStatsUpdates": false
 	},
 	"manifest_version": 1
 }
