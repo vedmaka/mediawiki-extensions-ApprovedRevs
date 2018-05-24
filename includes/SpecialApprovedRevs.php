@@ -18,10 +18,6 @@ class SpecialApprovedRevs extends SpecialPage {
 	function execute( $query ) {
 		$request = $this->getRequest();
 
-		//TODO: remove
-		//$test = ApprovedRevs::countQueryByType();
-
-
 		ApprovedRevs::addCSS();
 		$this->setHeaders();
 		list( $limit, $offset ) = $request->getLimitOffset();
