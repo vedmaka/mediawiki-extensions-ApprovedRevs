@@ -66,7 +66,8 @@
 		"ARApproveAction": "includes/AR_ApproveAction.php",
 		"ARUnapproveAction": "includes/AR_UnapproveAction.php",
 		"ARApproveFileAction": "includes/AR_ApproveFileAction.php",
-		"ARUnapproveFileAction": "includes/AR_UnapproveFileAction.php"
+		"ARUnapproveFileAction": "includes/AR_UnapproveFileAction.php",
+		"ARUpdateStatsJob": "includes/AR_UpdateStatsJob.php"
 	},
 	"ResourceModules": {
 		"ext.ApprovedRevs": {
@@ -168,6 +169,9 @@
 			"ApprovedRevsHooks::onwgQueryPages"
 		]
 	},
+	"JobClasses": {
+		"ar_updatestats": "ARUpdateStatsJob"
+	},
 	"config": {
 		"_prefix": "eg",
 		"ApprovedRevsEnabledNamespaces": {
@@ -183,7 +187,8 @@
 		"ApprovedRevsBlankIfUnapproved": false,
 		"ApprovedRevsAutomaticApprovals": true,
 		"ApprovedRevsShowApproveLatest": false,
-		"ApprovedRevsShowNotApprovedMessage": false
+		"ApprovedRevsShowNotApprovedMessage": false,
+		"ApprovedRevsNotify": []
 	},
 	"manifest_version": 1
 }

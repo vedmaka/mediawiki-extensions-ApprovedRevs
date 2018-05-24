@@ -104,6 +104,12 @@ class ApprovedRevsHooks {
 		}
 
 		$title = $wikipage->getTitle();
+
+		// No baseRevId so it's a new article and it's necessary to update stats
+		if( !$baseRevId ) {
+			ApprovedRevs::enqueueStatsUpdate( $title );
+		}
+
 		if ( ! self::userRevsApprovedAutomatically( $user, $title ) ) {
 			return true;
 		}
@@ -720,6 +726,7 @@ class ApprovedRevsHooks {
 	 */
 	static function deleteRevisionApproval( &$article, &$user, $reason, $id ) {
 		ApprovedRevs::deleteRevisionApproval( $article->getTitle() );
+		ApprovedRevs::enqueueStatsUpdate( $article->getTitle() );
 		return true;
 	}
 
@@ -774,6 +781,11 @@ class ApprovedRevsHooks {
 		return true;
 	}
 
+	/**
+	 * @param null|DatabaseUpdater $updater
+	 *
+	 * @return bool
+	 */
 	public static function describeDBSchema( $updater = null ) {
 		$dir = dirname( __FILE__ );
 
