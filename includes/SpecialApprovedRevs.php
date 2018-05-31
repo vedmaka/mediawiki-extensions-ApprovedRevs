@@ -30,7 +30,6 @@ class SpecialApprovedRevs extends SpecialPage {
 		} else {
 			return $rep->doQuery( $offset, $limit );
 		}
-
 	}
 
 	protected function getGroupName() {
