@@ -349,10 +349,10 @@ class ApprovedRevs {
 	 * Produces a db query array for specified type of request
 	 *
 	 * @param null|string $type allowed values are:
-	 *  null (default)  - Pages whose approved revision is not their latest
-	 *  'all'           - All pages with an approved revision
-	 *  'invalid'       - Pages with invalid approvals
-	 *  'unapproved'    - Unapproved pages
+	 *                          null (default)  - Pages whose approved revision is not their latest
+	 *                          'all'           - All pages with an approved revision
+	 *                          'invalid'       - Pages with invalid approvals
+	 *                          'unapproved'    - Unapproved pages
 	 *
 	 * @return array
 	 */
@@ -366,7 +366,8 @@ class ApprovedRevs {
 
 		if ( count( $egApprovedRevsNamespaces ) > 0 ) {
 			if ( $type == 'invalid' ) {
-				$mainCondsString .= " AND ( p.page_namespace NOT IN ( " . implode( ',', $egApprovedRevsNamespaces ) . " ) )";
+				$mainCondsString .= " AND ( p.page_namespace NOT IN ( " . implode( ',', $egApprovedRevsNamespaces ) .
+				                    " ) )";
 			} else {
 				$mainCondsString .= " OR ( p.page_namespace IN ( " . implode( ',', $egApprovedRevsNamespaces ) . " ) )";
 			}
@@ -380,7 +381,7 @@ class ApprovedRevs {
 			)
 		);
 
-		switch ($type) {
+		switch ( $type ) {
 
 			// All pages with an approved revision
 			case 'all':
@@ -392,10 +393,12 @@ class ApprovedRevs {
 				);
 				$query['join_conds'] = array(
 					'p' => array(
-						'JOIN', 'ar.page_id=p.page_id'
+						'JOIN',
+						'ar.page_id=p.page_id'
 					),
 					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
+						'LEFT OUTER JOIN',
+						'ar.page_id=pp_page'
 					)
 				);
 				$query['conds'] = $mainCondsString;
@@ -410,10 +413,12 @@ class ApprovedRevs {
 				);
 				$query['join_conds'] = array(
 					'ar' => array(
-						'LEFT OUTER JOIN', 'p.page_id=ar.page_id'
+						'LEFT OUTER JOIN',
+						'p.page_id=ar.page_id'
 					),
 					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
+						'LEFT OUTER JOIN',
+						'ar.page_id=pp_page'
 					)
 				);
 				$query['conds'] = "ar.page_id IS NULL AND ( $mainCondsString )";
@@ -428,10 +433,12 @@ class ApprovedRevs {
 				);
 				$query['join_conds'] = array(
 					'p' => array(
-						'LEFT OUTER JOIN', 'p.page_id=ar.page_id'
+						'LEFT OUTER JOIN',
+						'p.page_id=ar.page_id'
 					),
 					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
+						'LEFT OUTER JOIN',
+						'ar.page_id=pp_page'
 					),
 				);
 				$query['conds'] = $mainCondsString;
@@ -447,10 +454,12 @@ class ApprovedRevs {
 				);
 				$query['join_conds'] = array(
 					'p' => array(
-						'JOIN', 'ar.page_id=p.page_id'
+						'JOIN',
+						'ar.page_id=p.page_id'
 					),
 					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
+						'LEFT OUTER JOIN',
+						'ar.page_id=pp_page'
 					)
 				);
 				$query['conds'] = "p.page_latest != ar.rev_id AND ( $mainCondsString )";
@@ -465,36 +474,30 @@ class ApprovedRevs {
 	 * Counts amount of pages matches given type criteria
 	 *
 	 * @param null|string $type allowed values are:
-	 *  null (default)  - Pages whose approved revision is not their latest
-	 *  'all'           - All pages with an approved revision
-	 *  'invalid'       - Pages with invalid approvals
-	 *  'unapproved'    - Unapproved pages
+	 *                          null (default)  - Pages whose approved revision is not their latest
+	 *                          'all'           - All pages with an approved revision
+	 *                          'invalid'       - Pages with invalid approvals
+	 *                          'unapproved'    - Unapproved pages
 	 *
 	 * @return int
 	 */
 	public static function countPagesByType( $type = null ) {
 		$queryInfo = self::getQueryByType( $type );
 		$dbr = wfGetDB( DB_SLAVE );
-		$result = $dbr->selectRowCount(
-				$queryInfo['tables'],
-				'1',
-				$queryInfo['conds'],
-				__METHOD__,
-				array(),
-				$queryInfo['join_conds']
-		);
+		$result = $dbr->selectRowCount( $queryInfo['tables'], '1', $queryInfo['conds'], __METHOD__, array(), $queryInfo['join_conds'] );
 		return $result;
 	}
 
 	/**
 	 * Fetching total amount of pages match given queries types
+	 *
 	 * @param $types
 	 *
 	 * @return int
 	 */
 	public static function countPagesByTypes( $types ) {
 		$total = 0;
-		foreach ($types as $type) {
+		foreach ( $types as $type ) {
 			$total += self::countPagesByType( $type );
 		}
 		return $total;
@@ -512,21 +515,21 @@ class ApprovedRevs {
 
 		// If stats updates are disabled - do nothing since we expect
 		// maintenance script to be added into crontab for scheduled stats update
-		if( $egApprovedRevsDisableStatsUpdates ) {
+		if ( $egApprovedRevsDisableStatsUpdates ) {
 			return true;
 		}
 
 		$jobParams = array();
 		$job = new ARUpdateStatsJob( $title, $jobParams );
-		JobQueueGroup::singleton()->lazyPush($job);
+		JobQueueGroup::singleton()->lazyPush( $job );
 	}
 
 	/**
 	 * @return bool|stdClass
 	 */
 	public static function getStats() {
-		$dbr = wfGetDB(DB_SLAVE);
-		$row = $dbr->selectRow('approved_revs_stats', '*', array('row_id' => 1));
+		$dbr = wfGetDB( DB_SLAVE );
+		$row = $dbr->selectRow( 'approved_revs_stats', '*', array( 'row_id' => 1 ) );
 		return $row;
 	}
 
@@ -537,8 +540,8 @@ class ApprovedRevs {
 	 * @throws Exception
 	 */
 	public static function updateStats( $stats ) {
-		$dbw = wfGetDB(DB_MASTER);
-		return $dbw->update('approved_revs_stats', $stats, array('row_id' => 1));
+		$dbw = wfGetDB( DB_MASTER );
+		return $dbw->update( 'approved_revs_stats', $stats, array( 'row_id' => 1 ) );
 	}
 
 	/**
@@ -548,21 +551,16 @@ class ApprovedRevs {
 	 */
 	public static function notifyStatsChange() {
 		global $egApprovedRevsNotify, $wgPasswordSender, $wgPasswordSenderName;
-		$emailSubject = wfMessage('approvedrevs-notify-email-subject')->text();
-		$specialUrl = SpecialPage::getTitleFor('ApprovedRevs')->getFullURL();
-		foreach ($egApprovedRevsNotify as $userName ) {
+		$emailSubject = wfMessage( 'approvedrevs-notify-email-subject' )->text();
+		$specialUrl = SpecialPage::getTitleFor( 'ApprovedRevs' )->getFullURL();
+		foreach ( $egApprovedRevsNotify as $userName ) {
 			$user = User::newFromName( $userName );
 			$email = $user->getEmail();
-			if( !$user || empty($email) ) {
+			if ( !$user || empty( $email ) ) {
 				continue;
 			}
-			$emailBody = wfMessage('approvedrevs-notify-email-body')->params($userName, $specialUrl)->text();
-			UserMailer::send(
-				new MailAddress($email, $user->getName()),
-				new MailAddress($wgPasswordSender, $wgPasswordSenderName),
-				$emailSubject,
-				$emailBody
-			);
+			$emailBody = wfMessage( 'approvedrevs-notify-email-body' )->params( $userName, $specialUrl )->text();
+			UserMailer::send( new MailAddress( $email, $user->getName() ), new MailAddress( $wgPasswordSender, $wgPasswordSenderName ), $emailSubject, $emailBody );
 		}
 	}
 

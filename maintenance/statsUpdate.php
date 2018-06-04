@@ -1,10 +1,10 @@
 <?php
 
 // Allow people to have different layouts.
-if ( ! isset( $IP ) ) {
+if ( !isset( $IP ) ) {
 	$IP = __DIR__ . '/../../../';
-	if ( getenv("MW_INSTALL_PATH") ) {
-		$IP = getenv("MW_INSTALL_PATH");
+	if ( getenv( "MW_INSTALL_PATH" ) ) {
+		$IP = getenv( "MW_INSTALL_PATH" );
 	}
 }
 
@@ -37,9 +37,9 @@ class ApprovedRevsUpdateStats extends Maintenance {
 	public function execute() {
 		global $egApprovedRevsDisableStatsUpdates;
 
-		if( !$egApprovedRevsDisableStatsUpdates ) {
+		if ( !$egApprovedRevsDisableStatsUpdates ) {
 			$this->output( 'Please disable stats update by adding $egApprovedRevsDisableStatsUpdates = true; ' .
-			               'to LocalSettings.php');
+			               'to LocalSettings.php' );
 			return;
 		}
 
