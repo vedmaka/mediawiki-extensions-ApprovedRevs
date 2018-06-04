@@ -1068,13 +1068,13 @@ class ApprovedRevs {
 
 		// If stats updates are disabled - do nothing since we expect
 		// maintenance script to be added into crontab for scheduled stats update
-		if( $egApprovedRevsDisableStatsUpdates ) {
+		if ( $egApprovedRevsDisableStatsUpdates ) {
 			return true;
 		}
 
 		$jobParams = array();
 		$job = new ARUpdateStatsJob( $title, $jobParams );
-		JobQueueGroup::singleton()->lazyPush($job);
+		JobQueueGroup::singleton()->lazyPush( $job );
 	}
 
 	/**
@@ -1084,21 +1084,16 @@ class ApprovedRevs {
 	 */
 	public static function notifyStatsChange() {
 		global $egApprovedRevsNotify, $wgPasswordSender, $wgPasswordSenderName;
-		$emailSubject = wfMessage('approvedrevs-notify-email-subject')->text();
-		$specialUrl = SpecialPage::getTitleFor('ApprovedRevs')->getFullURL();
-		foreach ($egApprovedRevsNotify as $userName ) {
+		$emailSubject = wfMessage( 'approvedrevs-notify-email-subject' )->text();
+		$specialUrl = SpecialPage::getTitleFor( 'ApprovedRevs' )->getFullURL();
+		foreach ( $egApprovedRevsNotify as $userName ) {
 			$user = User::newFromName( $userName );
 			$email = $user->getEmail();
-			if( !$user || empty($email) ) {
+			if ( !$user || empty( $email ) ) {
 				continue;
 			}
-			$emailBody = wfMessage('approvedrevs-notify-email-body')->params($userName, $specialUrl)->text();
-			UserMailer::send(
-				new MailAddress($email, $user->getName()),
-				new MailAddress($wgPasswordSender, $wgPasswordSenderName),
-				$emailSubject,
-				$emailBody
-			);
+			$emailBody = wfMessage( 'approvedrevs-notify-email-body' )->params( $userName, $specialUrl )->text();
+			UserMailer::send( new MailAddress( $email, $user->getName() ), new MailAddress( $wgPasswordSender, $wgPasswordSenderName ), $emailSubject, $emailBody );
 		}
 	}
 

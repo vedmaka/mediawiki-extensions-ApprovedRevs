@@ -18,19 +18,19 @@ class ApprovedRevsDatabaseMaintenance extends LoggedUpdateMaintenance {
 	 */
 	public function doDBUpdates() {
 
-		$db = $this->getDB(DB_MASTER);
+		$db = $this->getDB( DB_MASTER );
 
-		if( !$db->tableExists('approved_revs_stats') ) {
+		if ( !$db->tableExists( 'approved_revs_stats' ) ) {
 			return false;
 		}
 
-		if( $db->selectRowCount('approved_revs_stats') ) {
+		if ( $db->selectRowCount( 'approved_revs_stats' ) ) {
 			return true;
 		}
 
 		$not_latest = ApprovedRevs::countPagesByType();
-		$unapproved = ApprovedRevs::countPagesByType('unapproved');
-		$invalid = ApprovedRevs::countPagesByType('invalid');
+		$unapproved = ApprovedRevs::countPagesByType( 'unapproved' );
+		$invalid = ApprovedRevs::countPagesByType( 'invalid' );
 		$total = $not_latest + $unapproved + $invalid;
 
 		$values = array(
@@ -44,11 +44,12 @@ class ApprovedRevsDatabaseMaintenance extends LoggedUpdateMaintenance {
 
 		try {
 			$result = $db->insert( 'approved_revs_stats', $values );
-		}catch (Exception $e) {
+		}
+		catch ( Exception $e ) {
 			$result = false;
 		}
 
-		if( $result ) {
+		if ( $result ) {
 			return true;
 		}
 
