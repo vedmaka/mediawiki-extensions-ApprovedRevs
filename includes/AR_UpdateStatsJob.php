@@ -54,10 +54,22 @@ class ARUpdateStatsJob extends Job {
 	 * @return int
 	 */
 	private function getStatsTotal() {
-		$not_latest = ApprovedRevs::countPagesByType();
-		$unapproved = ApprovedRevs::countPagesByType( 'unapproved' );
-		$invalid = ApprovedRevs::countPagesByType( 'invalid' );
-		$total = $not_latest + $unapproved + $invalid;
+		global $egApprovedRevsNotifyFiles;
+
+		$total = ApprovedRevs::countPagesByTypes([
+			null,
+			'unapproved',
+			'invalid'
+		]);
+
+		if( $egApprovedRevsNotifyFiles ) {
+			$total += ApprovedRevs::countFilesByTypes([
+				'notlatestfiles',
+				'unapprovedfiles',
+				'invalidfiles'
+			]);
+		}
+
 		return $total;
 	}
 

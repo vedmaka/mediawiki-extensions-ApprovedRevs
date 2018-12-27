@@ -686,6 +686,13 @@ class ApprovedRevs {
 	static public function getQueryInfoPageApprovals( $mode ) {
 		$approvedRevsNamespaces = ApprovedRevs::getApprovableNamespaces();
 
+		// Even if NS_FILE is specified in $wgApprovedRevsEnabledNamespaces
+		// we need to excluded it from the query since files are handled by
+		// `getQueryInfoFileApprovals` separately
+		if (($key = array_search(NS_FILE, $approvedRevsNamespaces)) !== false) {
+			unset($approvedRevsNamespaces[$key]);
+		}
+
 		$mainCondsString = "( pp_propname = 'approvedrevs' AND pp_value = 'y' " .
 			"OR pp_propname = 'approvedrevs-approver-users' " .
 			"OR pp_propname = 'approvedrevs-approver-groups' )";
@@ -902,122 +909,6 @@ class ApprovedRevs {
 	}
 
 	/**
-	 * Produces a db query array for specified type of request
-	 *
-	 * @param null|string $type allowed values are:
-	 *  null (default)  - Pages whose approved revision is not their latest
-	 *  'all'           - All pages with an approved revision
-	 *  'invalid'       - Pages with invalid approvals
-	 *  'unapproved'    - Unapproved pages
-	 *
-	 * @return array
-	 */
-	public static function getQueryByType( $type = null ) {
-		global $egApprovedRevsNamespaces;
-
-		$mainCondsString = "( pp_propname = 'approvedrevs' AND pp_value = 'y' )";
-		if ( $type == 'invalid' ) {
-			$mainCondsString = "( pp_propname IS NULL OR NOT $mainCondsString )";
-		}
-
-		if ( count( $egApprovedRevsNamespaces ) > 0 ) {
-			if ( $type == 'invalid' ) {
-				$mainCondsString .= " AND ( p.page_namespace NOT IN ( " . implode( ',', $egApprovedRevsNamespaces ) . " ) )";
-			} else {
-				$mainCondsString .= " OR ( p.page_namespace IN ( " . implode( ',', $egApprovedRevsNamespaces ) . " ) )";
-			}
-		}
-
-		$query = array(
-			'tables' => array(
-				'ar' => 'approved_revs',
-				'p' => 'page',
-				'pp' => 'page_props',
-			)
-		);
-
-		switch ($type) {
-
-			// All pages with an approved revision
-			case 'all':
-
-				$query['fields'] = array(
-					'p.page_id AS id',
-					'ar.rev_id AS rev_id',
-					'p.page_latest AS latest_id'
-				);
-				$query['join_conds'] = array(
-					'p' => array(
-						'JOIN', 'ar.page_id=p.page_id'
-					),
-					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
-					)
-				);
-				$query['conds'] = $mainCondsString;
-				break;
-
-			// Unapproved pages
-			case 'unapproved':
-
-				$query['fields'] = array(
-					'p.page_id AS id',
-					'p.page_latest AS latest_id'
-				);
-				$query['join_conds'] = array(
-					'ar' => array(
-						'LEFT OUTER JOIN', 'p.page_id=ar.page_id'
-					),
-					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
-					)
-				);
-				$query['conds'] = "ar.page_id IS NULL AND ( $mainCondsString )";
-				break;
-
-			// Pages with invalid approvals
-			case 'invalid':
-
-				$query['fields'] = array(
-					'p.page_id AS id',
-					'p.page_latest AS latest_id'
-				);
-				$query['join_conds'] = array(
-					'p' => array(
-						'LEFT OUTER JOIN', 'p.page_id=ar.page_id'
-					),
-					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
-					),
-				);
-				$query['conds'] = $mainCondsString;
-				break;
-
-			// Pages whose approved revision is not their latest
-			default:
-
-				$query['fields'] = array(
-					'p.page_id AS id',
-					'ar.rev_id AS rev_id',
-					'p.page_latest AS latest_id',
-				);
-				$query['join_conds'] = array(
-					'p' => array(
-						'JOIN', 'ar.page_id=p.page_id'
-					),
-					'pp' => array(
-						'LEFT OUTER JOIN', 'ar.page_id=pp_page'
-					)
-				);
-				$query['conds'] = "p.page_latest != ar.rev_id AND ( $mainCondsString )";
-				break;
-		}
-
-		return $query;
-
-	}
-
-	/**
 	 * Counts amount of pages matches given type criteria
 	 *
 	 * @param null|string $type allowed values are:
@@ -1029,15 +920,40 @@ class ApprovedRevs {
 	 * @return int
 	 */
 	public static function countPagesByType( $type = null ) {
-		$queryInfo = self::getQueryByType( $type );
+		$queryInfo = self::getQueryInfoPageApprovals( $type );
 		$dbr = wfGetDB( DB_SLAVE );
 		$result = $dbr->selectRowCount(
 				$queryInfo['tables'],
-				'1',
+				'*',
 				$queryInfo['conds'],
 				__METHOD__,
-				array(),
+				$queryInfo['options'],
 				$queryInfo['join_conds']
+		);
+		return $result;
+	}
+
+	/**
+	 * Counts amount of files matches given type criteria
+	 *
+	 * @param string $type allowed values are:
+	 *  'notlatestfiles'
+	 *  'approvedfiles'
+	 *  'unapprovedfiles'
+	 *  'invalidfiles'
+	 *
+	 * @return int
+	 */
+	public static function countFilesByType( $type = 'notlatestfiles' ) {
+		$queryInfo = self::getQueryInfoFileApprovals( $type );
+		$dbr = wfGetDB( DB_SLAVE );
+		$result = $dbr->selectRowCount(
+			$queryInfo['tables'],
+			'*',
+			$queryInfo['conds'],
+			__METHOD__,
+			$queryInfo['options'],
+			$queryInfo['join_conds']
 		);
 		return $result;
 	}
@@ -1052,6 +968,20 @@ class ApprovedRevs {
 		$total = 0;
 		foreach ($types as $type) {
 			$total += self::countPagesByType( $type );
+		}
+		return $total;
+	}
+
+	/**
+	 * Fetching total amount of files match given queries types
+	 * @param $types
+	 *
+	 * @return int
+	 */
+	public static function countFilesByTypes( $types ) {
+		$total = 0;
+		foreach ($types as $type) {
+			$total += self::countFilesByType( $type );
 		}
 		return $total;
 	}

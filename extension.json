@@ -192,6 +192,7 @@
 		"ApprovedRevsShowApproveLatest": false,
 		"ApprovedRevsShowNotApprovedMessage": false,
 		"ApprovedRevsNotify": [],
+		"ApprovedRevsNotifyFiles": false,
 		"ApprovedRevsDisableStatsUpdates": false
 	},
 	"manifest_version": 1
