@@ -51,6 +51,6 @@
 	"apihelp-approve-param-unapprove": "If set, revision will be unapproved rather than approved.",
 	"apihelp-approve-example-1": "Approve Revision 12345",
 	"apihelp-approve-example-2": "Unapprove Revision 12345",
-	"approvedrevs-notify-email-body": "Hey, $1!\nThere are pages either to be approved or requiring your attention in other way:\n$2",
+	"approvedrevs-notify-email-body": "Hey, $1!\nThere are pages either to be approved or requiring your attention in some other way:\n$2",
 	"approvedrevs-notify-email-subject": "[ApprovedRevs] Pages require your attention"
 }

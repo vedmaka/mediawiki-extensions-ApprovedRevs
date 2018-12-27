@@ -46,7 +46,7 @@ class ApprovedRevsUpdateStats extends Maintenance {
 		$job = new ARUpdateStatsJob( Title::newMainPage(), array() );
 		$job->run();
 
-		$this->output( "\nStats updated." );
+		$this->output( "\nStats were updated." );
 	}
 
 }
