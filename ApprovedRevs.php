@@ -55,6 +55,7 @@ $egApprovedRevsShowApproveLatest = false;
 $egApprovedRevsShowNotApprovedMessage = false;
 $egApprovedRevsNotify = array();
 $egApprovedRevsDisableStatsUpdates = false;
+$egApprovedRevsNotifyFiles = false;
 
 // internationalization
 $wgMessagesDirs['ApprovedRevs'] = __DIR__ . '/i18n';
